@@ -1,3 +1,6 @@
+#
+#  With thanks to https://www.quora.com/How-do-I-create-a-simple-REST-API-with-C-or-C++
+#
 FROM ubuntu:bionic AS build
 
 SHELL [ "/bin/bash", "-euo", "pipefail", "-c"]
@@ -30,8 +33,9 @@ RUN apt-get update \
 #
 #  Download restinio
 #
-ARG RESTINIO_VER=0.5.1.2
-RUN wget -q https://bitbucket.org/sobjectizerteam/restinio/downloads/restinio-0.5.1.2-full.tar.bz2
+ARG RESTINIO_VER=0.6.2
+RUN wget -q \
+    https://github.com/Stiffstream/restinio/releases/download/v.${RESTINIO_VER}/restinio-${RESTINIO_VER}-full.tar.bz2
 
 #
 #  Set up the build environment
@@ -42,9 +46,12 @@ COPY src /src
 #
 #  Copy Restinio into the source directory tree
 #
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 --directory=/src restinio-${RESTINIO_VER}/dev/restinio --strip-components=2
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 --directory=/src restinio-${RESTINIO_VER}/dev/nodejs/http_parser --strip-components=2
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 --directory=/src restinio-${RESTINIO_VER}/dev/fmt --strip-components=2
+RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
+    --directory=/src restinio-${RESTINIO_VER}/dev/restinio --strip-components=2
+RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
+    --directory=/src restinio-${RESTINIO_VER}/dev/nodejs/http_parser --strip-components=2
+RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
+    --directory=/src restinio-${RESTINIO_VER}/dev/fmt --strip-components=2
 
 #
 #  Build the target executable
@@ -57,9 +64,9 @@ RUN make
 #  At this point, everything is built.  The remaining steps configure this
 #  container image so it can be used for quick-and-dirty unit testing
 #
-RUN ls -l hello && ldd hello
+RUN ls -l hello && (ldd hello ||:)
 
-FROM gcr.io/distroless/cc:22bd467b41e5e656e31db347265fae118db166d9
+FROM gcr.io/distroless/static:nonroot
 
 # Add the app
 COPY --from=build /build/hello /hello
