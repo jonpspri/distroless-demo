@@ -13,33 +13,18 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 #
-#  Download restinio
-#
-ARG RESTINIO_VER=0.6.2
-RUN wget -q \
-    https://github.com/Stiffstream/restinio/releases/download/v.${RESTINIO_VER}/restinio-${RESTINIO_VER}-full.tar.bz2
-
-#
 #  Set up the build environment
 #
 RUN mkdir /build
 COPY src /src
-
-#
-#  Copy Restinio into the source directory tree
-#
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
-    --directory=/src restinio-${RESTINIO_VER}/dev/restinio --strip-components=2
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
-    --directory=/src restinio-${RESTINIO_VER}/dev/nodejs/http_parser --strip-components=2
-RUN tar jxf restinio-${RESTINIO_VER}-full.tar.bz2 \
-    --directory=/src restinio-${RESTINIO_VER}/dev/fmt --strip-components=2
+WORKDIR /src
+RUN git clone https://github.com/ipkn/crow.git
 
 #
 #  Build the target executable
 #
 WORKDIR /build
-RUN cmake -DRESTINIO_FIND_DEPS=ON -DRESTINIO_USE_BOOST_ASIO=static /src
+RUN cmake /src
 RUN make
 
 #
