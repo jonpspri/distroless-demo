@@ -3,7 +3,8 @@
 set -euo pipefail
 scriptdir="$(dirname "$(realpath "$0")")"
 
-for i in cxx-crow cxx-restinio go java-quarkus; do (
+mkdir -p "$scriptdir/log"
+for i in cxx-crow cxx-restinio go java-quarkus-vm java-quarkus-native; do (
     echo "-------------------------------------------------------------------"
     echo "Building $i..."
     # TODO Use parallel to speed this part up?
