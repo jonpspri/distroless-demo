@@ -7,13 +7,28 @@ scriptdir="$(dirname "$(realpath "$0")")"
 #  TODO:  Take sleep duration as a script argument.  Make use of Java VM
 #         image switchable (images to use as comma-seperated list?)
 #
+if [ "$(getopt -T)" == " --" ]; then
+  echo "Not using the appropriate getopt.  Please obtain 'GNU getout'"; exit 255
+fi
+eval set -- "$(getopt -os:i: --longoptions sleep:,images: -n 'getopt' -- "$@")"
+
+sleep_interval=5
+images="cxx-crow cxx-restinio go java-quarkus-vm java-quarkus-native"
+while true; do
+  case "$1" in
+    -s | --sleep) sleep_interval="$2"; shift; shift;;
+    -i | --images) images=$(tr ',' ' ' <<<$2); shift; shift;;
+    -- ) shift; break;;
+    * ) break;;
+  esac
+done
 
 #
 #  Output goes into the log directory; I recommend using something like
 #  `multitail` to watch the directory during build processing.
 #
 mkdir -p "$scriptdir/log"
-for i in cxx-crow cxx-restinio go java-quarkus-native; do (
+for i in $images; do (
     echo "-------------------------------------------------------------------"
     echo "Building $i..."
     docker build -t "distroless-demo-$i" "$scriptdir/$i" >"$scriptdir/log/$i-build.out"
@@ -21,7 +36,7 @@ for i in cxx-crow cxx-restinio go java-quarkus-native; do (
     echo "Running $i..."
     docker rm "$i" 2> /dev/null || :
     docker run --init --name="$i" -d -p 8080:8080 "distroless-demo-$i:latest"
-    sleep 1  # TODO -- change this into a loop with faster checks?
+    sleep $sleep_interval # TODO -- change this into a loop with faster checks?
 
     echo "Testing $i..."
     curl -si http://localhost:8080/api/hello || :; echo
