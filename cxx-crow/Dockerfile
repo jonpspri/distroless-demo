@@ -33,7 +33,8 @@ RUN make
 #
 RUN ls -l hello && (ldd hello ||:)
 
-FROM gcr.io/distroless/static:nonroot
+FROM us.icr.io/openwhisk-multiarch/distroless_base:static-nonroot_debian10
+#FROM gcr.io/distroless/static:nonroot
 
 # Add the app
 COPY --from=build /build/hello /hello
