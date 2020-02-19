@@ -13,12 +13,12 @@ RUN apt-get update \
       build-essential libz-dev zlib1g-dev \
  && rm -rf /var/lib/apt/lists/*
 
-ENV GRAALVM_VERSION=19.2.1 \
-    GRAALVM_GITHUB_PROJECT=oracle/graal \
-    GRAALVM_JAVA=""
-ENV GRAALVM_URL="https://github.com/${GRAALVM_GITHUB_PROJECT}/releases/download/vm-${GRAALVM_VERSION}/graalvm-ce-${GRAALVM_JAVA}linux-amd64-${GRAALVM_VERSION}.tar.gz"
+ENV GRAALVM_VERSION=19.3.1 \
+    GRAALVM_GITHUB_PROJECT=graalvm/graalvm-ce-builds \
+    GRAALVM_JAVA="java11-"
 
-RUN curl -sL "${GRAALVM_URL}" |  tar zfxv -
+RUN arch="$(uname -m | sed -e 's/x86_64/amd64/')" \
+ && curl -sL "https://github.com/${GRAALVM_GITHUB_PROJECT}/releases/download/vm-${GRAALVM_VERSION}/graalvm-ce-${GRAALVM_JAVA}linux-${arch}-${GRAALVM_VERSION}.tar.gz" |  tar zfxv -
 ENV GRAAL_HOME="/graalvm-ce-${GRAALVM_JAVA}${GRAALVM_VERSION}"
 ENV JAVA_HOME="${GRAAL_HOME}" \
     PATH="${GRAAL_HOME}/bin:$PATH"
