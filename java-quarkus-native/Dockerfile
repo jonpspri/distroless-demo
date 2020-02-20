@@ -32,7 +32,8 @@ RUN ./mvnw -B package -Pnative
 #  Learn more about this image at
 #  https://github.com/quarkusio/quarkus-images/tree/master/distroless
 #
-FROM cescoffier/native-base@sha256:407e2412c7d15ee951bfc31dcdcbbba806924350734e9b0929a95dd16c7c1b2b
+FROM us.icr.io/openwhisk-multiarch/distroless_base:base-nonroot_debian10
+#FROM cescoffier/native-base@sha256:407e2412c7d15ee951bfc31dcdcbbba806924350734e9b0929a95dd16c7c1b2b
 COPY --from=build \
   /getting-started/target/getting-started-1.0-SNAPSHOT-runner \
   /getting-started-1.0-SNAPSHOT-runner

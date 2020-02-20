@@ -13,7 +13,8 @@ fi
 eval set -- "$(getopt -os:i: --longoptions sleep:,images: -n 'getopt' -- "$@")"
 
 sleep_interval=5
-images="cxx-crow cxx-restinio go java-quarkus-vm java-quarkus-native"
+images="cxx-crow cxx-restinio go java-quarkus-native"
+#images="${images} java-quarkus-vm"
 while true; do
   case "$1" in
     -s | --sleep) sleep_interval="$2"; shift; shift;;
