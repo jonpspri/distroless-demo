@@ -1,7 +1,7 @@
 #
 #  With thanks to https://codesahara.com/blog/building-a-hello-world-rest-api-in-go/
 #
-FROM golang:1.13.8 AS build
+FROM golang:1.13.8-buster AS build
 
 COPY helloworld.go /go/src/app/helloworld.go
 
