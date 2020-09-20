@@ -1,0 +1,32 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: distroless-pipeline
+  namespace: distroless-demo
+spec:
+  workspaces:
+    - name: source
+  tasks:
+    - name: get-repo
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: "https://github.com/jonpspri/distroless-demo.git"
+      workspaces:
+        - name: output
+          workspace: source
+    - name: build-go
+      runAfter: [ get-repo ]
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      params:
+        - name: IMAGE
+          value: "distroless-go:latest"
+      workspaces:
+        - name: source
+          workspace: source
+          subPath: './go'

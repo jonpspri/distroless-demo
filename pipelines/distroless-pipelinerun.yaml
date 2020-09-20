@@ -1,0 +1,15 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: distroless-pipelinerun-
+  namespace: distroless-demo
+spec:
+  pipelineRef: { name: distroless-pipeline }
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ ReadWriteOnce ]
+          resources: { requests: { storage: 10Gi }}
+          storageClassName: portworx-shared-gp

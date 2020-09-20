@@ -1,0 +1,8 @@
+---
+extends: default
+
+rules:
+  brackets:
+    max-spaces-inside: 1
+  braces:
+    max-spaces-inside: 1
